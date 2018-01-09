@@ -20,63 +20,63 @@ make sure `YandexMobileMetrica.framework` and `libRCTAppMetrica.a` are included 
 
 **MainApplication.java**
 ```diff
- import android.app.Application;
- 
- import com.facebook.react.ReactApplication;
- import com.facebook.react.ReactNativeHost;
- import com.facebook.soloader.SoLoader;
- 
- +import com.yandex.metrica.YandexMetrica;
- +import com.doochik.RNAppMetrica.AppMetricaPackage;
- 
- public class MainApplication extends Application implements ReactApplication {
- 
-     +private static final String YandexAppMetricaApiKey = "YOUR_API_KEY";
- 
-     @Override
-     public void onCreate() {
-         super.onCreate();
- 
-         +// Initializing the AppMetrica SDK
-         +YandexMetrica.activate(getApplicationContext(), YandexAppMetricaApiKey);
-         +
-         +// Tracking user activity
-         +YandexMetrica.enableActivityAutoTracking(this);
- 
-         SoLoader.init(this, /* native exopackage */ false);
-     }
-     
-     ...
-         +// This method is inside ReactNativeHost 
-         @Override
-         protected List<ReactPackage> getPackages() {
-             return Arrays.<ReactPackage>asList(
-                     new MainReactPackage(),
-                     +new AppMetricaPackage()
-             );
-         }
-     ...
- }
+import android.app.Application;
+
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.soloader.SoLoader;
+
++import com.yandex.metrica.YandexMetrica;
++import com.doochik.RNAppMetrica.AppMetricaPackage;
+
+public class MainApplication extends Application implements ReactApplication {
+
++   private static final String YandexAppMetricaApiKey = "YOUR_API_KEY";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
++       // Initializing the AppMetrica SDK
++       YandexMetrica.activate(getApplicationContext(), YandexAppMetricaApiKey);
++   
++       // Tracking user activity
++       YandexMetrica.enableActivityAutoTracking(this);
+    
+        SoLoader.init(this, /* native exopackage */ false);
+    }
+
+    ...
++       // This method is inside ReactNativeHost 
+        @Override
+        protected List<ReactPackage> getPackages() {
+            return Arrays.<ReactPackage>asList(
+                            new MainReactPackage(),
++                           new AppMetricaPackage()
+            );
+        }
+    ...
+}
 ```
 
 **build.gradle**
 ```diff
-    dependencies {
-        compile fileTree(dir: "libs", include: ["*.jar"])
-        compile "com.android.support:appcompat-v7:23.0.1"
-        compile "com.facebook.react:react-native:+"  // From node_modules
-        +compile project(':react-native-appmetrica')
-    }
+dependencies {
+    compile fileTree(dir: "libs", include: ["*.jar"])
+    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.facebook.react:react-native:+"  // From node_modules
++   compile project(':react-native-appmetrica')
+}
 ```
 
 **settings.gradle**
 ```diff
-    rootProject.name = 'project_name'
-    
-    +include ':react-native-appmetrica'
-    +project(':react-native-appmetrica').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-appmetrica/android')
-    
-    include ':app'
+rootProject.name = 'project_name'
+
++include ':react-native-appmetrica'
++project(':react-native-appmetrica').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-appmetrica/android')
+
+include ':app'
 ```
 
 ## Example
