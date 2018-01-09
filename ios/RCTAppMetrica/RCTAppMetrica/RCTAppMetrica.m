@@ -7,23 +7,38 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(activateWithApiKey:(NSString *)apiKey)
-{
-    [YMMYandexMetrica activateWithApiKey:apiKey];
-}
-
-RCT_EXPORT_METHOD(reportEvent:(NSString *)message)
-{
-    [YMMYandexMetrica reportEvent:message onFailure:NULL];
-}
-
 RCT_EXPORT_METHOD(reportEvent:(NSString *)message parameters:(nullable NSDictionary *)params)
 {
-    [YMMYandexMetrica reportEvent:message parameters:params onFailure:NULL];
+    if (params == nil) {
+        [YMMYandexMetrica reportEvent:message onFailure:NULL];
+    }
+    else {
+        [YMMYandexMetrica reportEvent:message parameters:params onFailure:NULL];
+    }
 }
 
-RCT_EXPORT_METHOD(reportError:(NSString *)message) {
-    NSException *exception = [[NSException alloc] initWithName:message reason:nil userInfo:nil];
+RCT_EXPORT_METHOD(reportError:(NSString *)message parameters:(nullable NSDictionary *)params) {
+    NSString *paramsJson = [self dictionaryToJson:params];
+    NSException *exception = [[NSException alloc] initWithName:@"YandexReportedError" reason:paramsJson userInfo:nil];
     [YMMYandexMetrica reportError:message exception:exception onFailure:NULL];
 }
+
+-(NSString*) dictionaryToJson:(nullable NSDictionary *) dictionary {
+    if (dictionary == nil) {
+        return [[NSString alloc] initWithString:@""];
+    }
+    
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:0
+                                                         error:&error];
+    
+    if (!jsonData) {
+        NSLog(@"Failed to serialize an error for Yandex AppMetrica: %@", error);
+        return [[NSString alloc] initWithString:@""];
+    } else {
+        return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
+}
+
 @end
