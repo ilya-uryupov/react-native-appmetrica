@@ -10,6 +10,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.Promise;
 
 import java.lang.Exception;
 
@@ -29,24 +30,13 @@ public class AppMetricaModule extends ReactContextBaseJavaModule {
         return ModuleName;
     }
 
-
     @ReactMethod
-    public void activateWithApiKey(String key) {
-        YandexMetrica.activate(getReactApplicationContext().getApplicationContext(), key);
-
-        Activity activity = getCurrentActivity();
-        if (activity != null) {
-            Application application = activity.getApplication();
-            YandexMetrica.enableActivityAutoTracking(application);
+    public void reportError(String message, @Nullable ReadableMap params) {
+        if (params != null) {
+            YandexMetrica.reportError(message, new Throwable(convertReadableMapToJson(params)));
         }
-    }
-
-    @ReactMethod
-    public void reportError(String message) {
-        try {
-            Integer.valueOf("00xffWr0ng");
-        } catch (Throwable error) {
-            YandexMetrica.reportError(message, error);
+        else {
+            YandexMetrica.reportError(message, new Throwable());
         }
     }
 
