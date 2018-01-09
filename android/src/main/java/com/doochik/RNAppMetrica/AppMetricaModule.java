@@ -43,6 +43,7 @@ public class AppMetricaModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void reportEvent(String message, @Nullable ReadableMap params) {
         if (params != null) {
+            // TODO: Can we just do this: params.toHashMap() ?
             YandexMetrica.reportEvent(message, convertReadableMapToJson(params));
         } else {
             YandexMetrica.reportEvent(message);
